@@ -1,0 +1,21 @@
+{
+  "name": "omh_schema_library_theme",
+  "version": "0.1.0",
+  "description": "Boilerplate theme for a schema library based on the Wordpress Twenty Sixteen theme.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "openmhealth",
+    "schema",
+    "library"
+  ],
+  "author": "Open mHealth",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "bower": "^1.7.7",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.0.5"
+  }
+}
