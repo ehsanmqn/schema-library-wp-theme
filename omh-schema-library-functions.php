@@ -9,7 +9,7 @@ function omh_schema_library_theme_scripts() {
   $load_deps = true;
 
   if ( has_filter('load_schema_library_dependencies') ){
-    $load_deps = apply_filters('load_schema_library_dependencies');
+    $load_deps = apply_filters('load_schema_library_dependencies','');
   }
 
   if ( $load_deps ){
