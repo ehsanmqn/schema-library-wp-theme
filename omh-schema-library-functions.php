@@ -4,6 +4,36 @@
  *
  */
 
+
+function omh_schema_library_localize_js( $script_name ){
+
+  // Localize the script with directory and schema data
+  $schema_query = new WP_Query( array(
+    'post_type' => 'schema',
+    'post_status' => 'publish',
+    'posts_per_page' => -1,
+    'orderby' => 'title',
+    'order'   => 'ASC' ) );
+
+  $schemaLinks = array();
+
+  if( $schema_query->have_posts() ) {
+    while ( $schema_query->have_posts() ) :
+      $schema_query->the_post();
+      array_push( $schemaLinks, array( 'link' => get_permalink(), 'title' => get_the_title() ) );
+    endwhile;
+  }
+
+  wp_reset_query();  // Restore global post data stomped by the_post().
+
+  wp_localize_script( $script_name, 'wordpress', array(
+    'themeDirectory' => get_template_directory_uri(),
+    'siteUrl' => rtrim( get_site_url(), '/wp'),
+    'schemaLinks' => $schemaLinks
+  ) );
+
+}
+
 function omh_schema_library_theme_scripts() {
 
   $load_deps = true;
@@ -39,40 +69,13 @@ function omh_schema_library_theme_scripts() {
       'omh-documentation-utilities-script'
       ), '0.1.1', false );
 
-  } else {
-
-    // Enqueue the schema lib js without any deps
-    wp_enqueue_script( 'omh-schema-library-script', get_template_directory_uri() . '/js/omh-schema-library-functions.js', array(), '0.1.1', false );
-
   }
 
-  // Localize the script with directory and schema data
-  $schema_query = new WP_Query( array(
-    'post_type' => 'schema',
-    'post_status' => 'publish',
-    'posts_per_page' => -1,
-    'orderby' => 'title',
-    'order'   => 'ASC' ) );
-
-  $schemaLinks = array();
-
-  if( $schema_query->have_posts() ) {
-    while ( $schema_query->have_posts() ) :
-      $schema_query->the_post();
-      array_push( $schemaLinks, array( 'link' => get_permalink(), 'title' => get_the_title() ) );
-    endwhile;
-  }
-
-  wp_reset_query();  // Restore global post data stomped by the_post().
-
-  wp_localize_script( 'omh-schema-library-script', 'wordpress', array(
-    'themeDirectory' => get_template_directory_uri(),
-    'siteUrl' => rtrim( get_site_url(), '/wp'),
-    'schemaLinks' => $schemaLinks
-  ) );
+  omh_schema_library_localize_js('omh-schema-library-script');
 
 }
 
 add_action( 'wp_enqueue_scripts', 'omh_schema_library_theme_scripts' );
+
 
 ?>
