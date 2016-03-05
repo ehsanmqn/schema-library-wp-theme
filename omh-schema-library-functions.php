@@ -13,6 +13,7 @@ function omh_schema_library_theme_scripts() {
   }
 
   if ( $load_deps ){
+
     //Theme css
     wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/bower_components/bootstrap/dist/css/bootstrap.min.css' );
     wp_enqueue_style( 'angular-bootstrap', get_template_directory_uri() . '/bower_components/angular-bootstrap/ui-bootstrap-csp.css' );
@@ -26,10 +27,24 @@ function omh_schema_library_theme_scripts() {
     wp_enqueue_script( 'moment', get_template_directory_uri() . '/bower_components/moment/min/moment.min.js', array() );
     wp_enqueue_script( 'codemirror', get_template_directory_uri() . '/bower_components/codemirror/lib/codemirror.js', array() );
     wp_enqueue_script( 'omh-documentation-utilities-script', get_template_directory_uri() . '/js/omh-documentation-utilities.js', array( 'jquery','moment' ) );
-  }
+    
+    // Enqueue the schema lib js
+    wp_enqueue_script( 'omh-schema-library-script', get_template_directory_uri() . '/js/omh-schema-library-functions.js', array(
+      'jquery',
+      'angular',
+      'angular-bootstrap',
+      'angular-ui-router',
+      'moment',
+      'codemirror',
+      'omh-documentation-utilities-script'
+      ), '0.1.1', false );
 
-  // Enqueue the schema lib js
-  wp_enqueue_script( 'omh-schema-library-script', get_template_directory_uri() . '/js/omh-schema-library-functions.js', array( 'jquery','angular','moment','omh-documentation-utilities-script' ), '0.1.1', false );
+  } else {
+
+    // Enqueue the schema lib js without any deps
+    wp_enqueue_script( 'omh-schema-library-script', get_template_directory_uri() . '/js/omh-schema-library-functions.js', array(), '0.1.1', false );
+
+  }
 
   // Localize the script with directory and schema data
   $schema_query = new WP_Query( array(
