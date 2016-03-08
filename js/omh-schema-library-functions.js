@@ -1,5 +1,11 @@
 /**
-* The main js code that runs the schema library angular app
+* The main js code that runs the schema library angular app.
+* Depends on Advanced Custom Fields and WP REST plugins.
+*
+* If you would like to use this module in aonther app, simply include this module as a dependency.
+* All controllers and directives will then become available to the other app.
+*
+* Asset and search urls can be managed using the url accessors in OMHSchemaLibraryDataService.
 *
 */
 
@@ -111,6 +117,7 @@
 
     var versionWildcards = {};
 
+    // get the data for a schema and populate scope vars to display it
     OMHSchemaLibraryDataService.getSchemaData( $attrs.schemaPostId ).then( function( data ){
 
         $scope.schema = data.data;
@@ -147,10 +154,13 @@
 
     });
 
+    // switch which version of the schema is shown in the view
     $scope.changeVersion = function( version ){
         $scope.selectedVersion = version;
         updateVisibleSampleData();
     };
+
+    // show the next sample data entry in the list of sample data
     $scope.cycleSampleData = function( incrementAmount ){
         var newIndex = ( $scope.visibleSampleData.indexOf( $scope.selectedSampleData ) + incrementAmount );
         newIndex = newIndex < 0 ? $scope.visibleSampleData.length + newIndex : newIndex;
@@ -178,11 +188,13 @@
         $location.hash(old);
     };
 
+    //see if the version of the schema is visible
     function getVisibility( version ){
       return (version.visibility instanceof Array && version.visibility[0] === 'visible') ||
              version.visibility === 'visible';
     }
 
+    // check if the sample data is applicable to the schema version
     function dataVersionMatchesSchemaVersion( dataVersion, schemaVersion ){
       dataVersionDigits = dataVersion.split('.');
       schemaVersionDigits = schemaVersion.split('.');
@@ -199,6 +211,7 @@
       return match;
     }
 
+    // show only the applicable sample data for the currently showing version of the schema
     function updateVisibleSampleData(){
         $scope.visibleSampleData = [];
         angular.forEach( $scope.schema.acf.sample_data, function( data ){
@@ -226,8 +239,10 @@
 
             var code;
             if ( attrs.formattedCode ){
+              // escaping this way makes sure that regex's and other special chars come through properly
               code = utils.decodeHtmlChars( utils.decodeHtmlChars( scope.formattedCode ) );
             } else{
+              // escaping this way makes sure that regex's and other special chars come through properly
               code = utils.decodeHtmlChars( utils.decodeHtmlChars( element.html() ) );
             }
             if( code ){
