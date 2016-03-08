@@ -14,12 +14,37 @@
   // a service for retrieving the schema data from the WP REST API (version 1)
   omhSchemaLibraryModule.service('OMHSchemaLibraryDataService', [ '$http', function( $http ) {
 
+      var assetURLs = {
+        'spinner-micro': wordpress.themeDirectory+'/css/images/spinner_micro_transparent.gif',
+        'spinner-small': wordpress.themeDirectory+'/css/images/spinner_small1.gif'
+      };
+
+      var searchURL = wordpress.siteUrl + '/wp-json/wp/v2/schema?filter[posts_per_page]=-1';
+
       this.getSchemaData = function( id ){
             return $http.get( wordpress.siteUrl+'/wp-json/wp/v2/schema/'+id );
       };
 
       this.searchSchemaData = function( term ){
-            return $http.get( wordpress.siteUrl+'/wp-json/wp/v2/schema?search=' + encodeURIComponent( term ) + '&filter[posts_per_page]=-1' );
+            return $http.get( searchURL + '&search=' + encodeURIComponent( term ) );
+      };
+
+      this.getAssetURL = function( assetKey ){
+        return assetURLs[ assetKey ];
+      };
+
+      //allows apps to use this service and change the location of assets
+      this.setAssetURL = function( assetKey, url ){
+        assetURLs[ assetKey ] = url;
+      };
+
+      this.getSearchURL = function(){
+        return searchURL;
+      };
+
+      //allows apps to use this service and change the location of search
+      this.setSearchURL = function( url ){
+        searchURL = url;
       };
 
   }])
@@ -32,8 +57,10 @@
     $scope.noResults = false;
     $scope.searchTerm = '';
 
+    $scope.getAssetURL = OMHSchemaLibraryDataService.getAssetURL; // used by template in ng-src
+
     // preload spinner
-    utils.preload( wordpress.themeDirectory+'/css/images/spinner_micro_transparent.gif','spinner-preload' );
+    utils.preload( $scope.getAssetURL( 'spinner-micro' ), 'spinner-preload' );
 
 
     $scope.search = function( term ){
@@ -65,6 +92,7 @@
       $scope.noResults = false;
     };
 
+
   }])
 
   // controller that helps render the view of the schema and provides version and sample data interactivity
@@ -78,6 +106,8 @@
     $scope.schemas = wordpress.schemaLinks;
     $scope.versionButtonStatus = { 'isopen': false };
     $scope.loadingMessage = 'Loading schema and sample data...';
+
+    $scope.getAssetURL = OMHSchemaLibraryDataService.getAssetURL; // used by template in ng-src
 
     var versionWildcards = {};
 
