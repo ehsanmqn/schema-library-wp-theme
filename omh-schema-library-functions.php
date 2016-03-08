@@ -2,30 +2,21 @@
 /**
  * Enqueues scripts and styles for omh schema library.
  *
+ * Files that include this file can define a filter with the hook 'load_schema_library_dependencies'
+ * and return true or false depending on whether the dependencies should be loaded and localized.
+ *
+ * omh_schema_library_localize_js() should be used to pass worpress data into any script that
+ * contains the schema library's js, e.g. a concatenated script that contains schema-library-functions.js
+ *
  */
 
 
+/**
+* Localize the script associated with the hook passed in
+* @param $script_name is the name of the script used as the first parameter in wp_enqueue_script()
+* @param $theme_directory is a url path to the directory that contains the theme files (optional)
+*/
 function omh_schema_library_localize_js( $script_name, $theme_directory = null ){
-
-  // Localize the script with directory and schema data
-  // $args = array(
-  //   'post_type' => 'schema',
-  //   'post_status' => 'publish',
-  //   'posts_per_page' => -1,
-  //   'orderby' => 'title',
-  //   'order'   => 'ASC' );
-//  $schema_query = new WP_Query( $args );
-
-  // $schemaLinks = array();
-
-  // if( $schema_query->have_posts() ) {
-  //   while ( $schema_query->have_posts() ) :
-  //     $schema_query->the_post();
-  //     array_push( $schemaLinks, array( 'link' => get_permalink(), 'title' => get_the_title() ) );
-  //   endwhile;
-  // }
-
-  // wp_reset_query();  // Restore global post data stomped by the_post().
 
   if ( $theme_directory == null ){
     $theme_directory = get_template_directory_uri();
@@ -34,11 +25,13 @@ function omh_schema_library_localize_js( $script_name, $theme_directory = null )
   wp_localize_script( $script_name, 'wordpress', array(
     'themeDirectory' => $theme_directory,
     'siteUrl' => rtrim( get_site_url(), '/wp'),
-    // 'schemaLinks' => $schemaLinks
   ) );
 
 }
 
+/**
+* Load all js and css dependencies, as well as the schema library theme's main js file
+*/
 function omh_schema_library_theme_scripts() {
 
   //Theme css
